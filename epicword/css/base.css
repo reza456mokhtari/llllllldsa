@@ -1,0 +1,108 @@
+/* ============================================================
+   EpicWord — base.css · tokens, reset, primitives, dialogs, toast
+   ============================================================ */
+:root{
+  --acc:#185abd; --acc-2:#0b4da2; --acc-soft:#e7f0fb; --hover:#eff4fc;
+  --ink:#20252c; --ink-2:#57616e; --ink-3:#8b95a3;
+  --line:#d9dee5; --line-2:#e8ebef;
+  --panel:#fff; --band:#f3f5f8; --sel:#dcebff;
+  --ok:#107c3e; --warn:#b3620b; --bad:#c0392b;
+  --eb-bg:#17131a; --eb-panel:#1e1922; --eb-panel2:#251e29;
+  --eb-ink:#eae2d2; --eb-ink2:#a99f92; --eb-line:#332a38;
+  --ember:#e2803f; --ember2:#b3261e; --ember-soft:rgba(226,128,63,.14);
+  --shadow-lg:0 20px 60px rgba(8,18,48,.24);
+  --radius:6px;
+}
+[data-theme="dark"]{
+  --panel:#23262b; --band:#1b1e23; --ink:#e8eaee; --ink-2:#a7b0bd; --ink-3:#78839355;
+  --line:#3a3f47; --line-2:#2f333a; --hover:#2c313a; --acc-soft:#253241; --sel:#2e3d50;
+}
+*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0; display:flex; flex-direction:column; overflow:hidden;
+  font:14px/1.45 "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  color:var(--ink); background:var(--band);
+}
+::selection{ background:var(--sel) }
+::-webkit-scrollbar{ width:11px; height:11px }
+::-webkit-scrollbar-thumb{ background:#c8cdd6; border:3px solid transparent; border-radius:8px; background-clip:content-box }
+::-webkit-scrollbar-thumb:hover{ background:#a9b1bd; background-clip:content-box }
+[data-theme="dark"] ::-webkit-scrollbar-thumb{ background:#5a606a }
+button{ font:inherit; color:inherit; cursor:pointer; background:none; border:0 }
+input,select,textarea{
+  font:inherit; color:inherit; background:var(--panel);
+  border:1px solid var(--line); border-radius:4px; padding:5px 8px; outline:none;
+}
+input:focus,select:focus,textarea:focus{ border-color:var(--acc); box-shadow:0 0 0 2px rgba(24,90,189,.18) }
+[hidden]{ display:none !important }
+kbd{
+  font:600 11px "Segoe UI"; color:#404857; background:#eef0f4; border:1px solid #d6dae1;
+  border-bottom-width:2px; border-radius:4px; padding:1px 6px; white-space:nowrap;
+}
+.gbtn{
+  display:inline-flex; align-items:center; gap:7px; padding:6px 12px; border-radius:5px;
+  border:1px solid var(--line); background:var(--panel); font-size:12.5px; font-weight:600;
+}
+.gbtn:hover{ background:var(--hover); border-color:#c8d4e6 }
+.gbtn.tiny{ padding:3px 8px; font-size:10.5px; letter-spacing:.4px }
+.gbtn.acc{ background:var(--acc); border-color:var(--acc-2); color:#fff }
+.gbtn.acc:hover{ background:#1d63c9 }
+.gbtn.danger{ color:var(--bad) }
+.gbtn:disabled{ opacity:.45; pointer-events:none }
+
+/* ---------- icon ---------- */
+.ic{ display:inline-flex; flex:none; align-items:center; justify-content:center; color:currentColor }
+.ic svg{ display:block }
+
+/* ---------- toast ---------- */
+#toasts{
+  position:fixed; bottom:44px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px; z-index:400; pointer-events:none;
+}
+.toast{
+  display:flex; align-items:center; gap:9px; padding:9px 16px; border-radius:8px;
+  background:#20242b; color:#f2f4f8; font-size:12.5px; font-weight:600;
+  border:1px solid #3a4149; box-shadow:0 10px 30px rgba(0,0,0,.35);
+  animation:tst .22s ease-out; max-width:70vw;
+}
+.toast.ok{ border-color:#2c7a45 } .toast.err{ border-color:#c0392b } .toast.warnc{ border-color:#b3620b }
+.toast .ic svg{ width:15px; height:15px }
+@keyframes tst{ from{ opacity:0; transform:translateY(9px) } }
+.toast.fade{ opacity:0; transition:opacity .5s }
+
+/* ---------- overlay / dialog ---------- */
+.ground{
+  position:fixed; inset:0; z-index:300; display:grid; place-items:center;
+  background:rgba(14,20,38,.45); backdrop-filter:blur(3px); animation:fa .18s ease-out; padding:18px;
+}
+[data-theme="dark"] .ground{ background:rgba(8,10,16,.6) }
+@keyframes fa{ from{ opacity:0 } }
+.win{
+  width:min(560px,94vw); max-height:86vh; display:flex; flex-direction:column;
+  background:var(--panel); border:1px solid var(--line); border-radius:10px;
+  box-shadow:var(--shadow-lg); animation:win .2s ease-out; overflow:hidden;
+}
+.win.wide{ width:min(760px,94vw) }
+@keyframes win{ from{ opacity:0; transform:translateY(12px) scale(.985) } }
+.winhdr{
+  display:flex; align-items:center; gap:10px; padding:11px 16px;
+  border-bottom:1px solid var(--line-2); background:linear-gradient(#fbfcfe,#f4f6f9);
+}
+[data-theme="dark"] .winhdr{ background:#262a31 }
+.winhdr h3{ margin:0; font-size:14px; font-weight:600; display:flex; align-items:center; gap:9px }
+.winhdr .ic svg{ width:17px; height:17px; color:var(--acc) }
+.winx{ margin-left:auto; width:28px; height:28px; border-radius:5px; display:grid; place-items:center; color:var(--ink-2) }
+.winx:hover{ background:#efe2e2; color:var(--bad) }
+.winbody{ padding:16px; overflow:auto; font-size:13px; color:var(--ink) }
+.winfoot{
+  display:flex; gap:8px; justify-content:flex-end; align-items:center;
+  padding:11px 16px; border-top:1px solid var(--line-2); background:var(--band);
+}
+.winfoot .push{ margin-right:auto; color:var(--ink-3); font-size:11.5px }
+.frow{ display:flex; flex-direction:column; gap:5px; margin-bottom:11px }
+.frow label{ font-size:11.5px; font-weight:600; color:var(--ink-2); letter-spacing:.3px }
+.frow.check{ flex-direction:row; align-items:center; gap:9px }
+.frow input[type=checkbox]{ width:15px; height:15px; accent-color:var(--acc) }
+.fhint{ font-size:11.5px; color:var(--ink-3); line-height:1.5 }
+.note-good{ color:var(--ok) } .note-bad{ color:var(--bad) }

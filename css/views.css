@@ -1,0 +1,59 @@
+/* ============================================================
+   EPIC MODE — views.css
+   ساختار viewها: دکمک‌ها، تب‌ها، چیدمان دوستونی، کنترلون
+   ============================================================ */
+
+/* ---------- چیدمان دسته‌بندی ---------- */
+.board2{display:grid;grid-template-columns:minmax(320px,1fr) minmax(280px,.72fr);gap:18px;align-items:start}
+@media(max-width:980px){.board2{grid-template-columns:1fr}}
+.crouch{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+@media(max-width:420px){.crouch{grid-template-columns:1fr}}
+
+/* ---------- تب‌ها ---------- */
+.tablist{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.scourse{display:flex;gap:2px;padding:3px;background:rgba(7,6,10,.6);border:1px solid var(--line2);border-radius:14px}
+.scell{padding:8px 16px;border-radius:11px;color:var(--ink2);font-weight:800;font-size:.84rem;transition:all var(--dur);display:inline-flex;align-items:center;gap:7px}
+.scell .n{background:rgba(255,255,255,.07);border-radius:7px;padding:1px 8px;font-size:.7rem;font-variant-numeric:tabular-nums}
+.scell:hover:not(:disabled){color:#fff}
+.scell[aria-selected=true]{color:#fff;background:linear-gradient(135deg,var(--red),var(--orange));box-shadow:0 6px 16px -6px rgba(255,47,36,.7),inset 0 1px 0 rgba(255,255,255,.35)}
+.scell[aria-selected=true] .n{background:rgba(255,255,255,.22)}
+
+/* ---------- ادیتور مجله (ویرایش موقعیت روز) ---------- */
+.dosage{display:flex;flex-direction:column;gap:13px}
+.dosage .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.dosage .duo{grid-template-columns:1fr}}
+.dosage .cuo{display:flex;gap:9px;flex-wrap:wrap}
+@media(max-width:640px){.dosage .cuo .grow{flex:1 1 160px}}
+.dosage .wrapit{border:1px solid var(--line2);border-radius:22px;padding:11px;background:rgba(255,255,255,.025)}
+.dosage .wrapit .cap{font-size:.72rem;font-weight:800;color:var(--ink2);display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.dosage .wrapit .cap .i{color:var(--orange)}
+.dosage .wrapit .cell{background:transparent;width:100%;justify-content:flex-start;text-align:start;border-color:transparent;padding-inline-start:10px}
+.dosage .wrapit .cell:hover{border-color:var(--line2);padding-inline-start:14px}
+.dosage .wrapit .cell[aria-pressed=true]{border-color:rgba(255,138,0,.5);background:rgba(255,138,0,.09);color:var(--amber)}
+.dosage .wrapit .premt{display:flex;gap:8px;flex-wrap:wrap}
+.dosage .help{background:rgba(255,138,0,.07);border:1px dashed rgba(255,138,0,.35);border-radius:12px;padding:9px 12px;font-size:.76rem;color:var(--amber);display:flex;gap:8px;align-items:flex-start}
+.dosage .help .i{color:var(--orange);flex:none;margin-top:3px}
+
+/* ---------- هشدار پایین ---------- */
+.alarmer{display:flex;gap:11px;align-items:center;background:rgba(255,47,36,.08);border:1px solid rgba(255,47,36,.35);border-radius:13px;padding:10px 14px;font-size:.8rem;color:var(--ink);font-weight:700}
+.alarmer .i{color:var(--red);flex:none}
+
+/* ---------- نوارهای زیر فرم (اختیاری) ---------- */
+.barfoot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-top:1px dashed var(--line2);padding-top:13px;margin-top:13px}
+.barfoot .push{margin-inline-start:auto}
+
+/* ---------- کنترل برای خط لوله‌ها ---------- */
+.controller{display:flex;flex-direction:column;gap:14px}
+.controller .cluster{display:flex;flex-direction:column;gap:11px}
+
+/* ---------- کالیبره‌ها ---------- */
+.tunable{padding:16px;border-radius:15px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.tunable .metriccap{display:flex;justify-content:space-between;color:var(--ink2);font-size:.8rem;font-weight:800}
+.tunable .metriccap b{color:var(--amber)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:linear-gradient(90deg,var(--red),var(--orange));outline:none;margin-top:11px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:4px solid var(--red);box-shadow:0 0 12px rgba(255,47,36,.75);cursor:pointer;transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:4px solid var(--red)}
+
+/* ---------- اتاق‌های کنار هم ---------- */
+.stack{display:flex;flex-direction:column;gap:13px}

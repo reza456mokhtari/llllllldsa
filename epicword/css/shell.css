@@ -1,0 +1,170 @@
+/* ============================================================
+   EpicWord — shell.css · menubar, ribbon, doc-tabs, statusbar
+   ============================================================ */
+
+/* ---------- menubar ---------- */
+.menubar{
+  height:30px; display:flex; align-items:center; padding:0 10px; gap:2px; flex:none;
+  background:linear-gradient(#fdfdfe,#f5f6f8); border-bottom:1px solid var(--line);
+  position:relative; z-index:70;
+}
+.mbrand{
+  display:flex; align-items:center; gap:7px; padding:0 9px 0 3px; font-weight:600; font-size:13px;
+  color:var(--ink); border-right:1px solid var(--line-2); margin-right:6px; user-select:none;
+}
+.mbrand .ic svg{ width:17px; height:17px; color:var(--acc) }
+.mbrand b{ color:var(--acc) }
+.mitem{
+  padding:5px 10px; font-size:12.5px; color:#3c434d; border-radius:4px; user-select:none; white-space:nowrap;
+}
+.mitem:hover, .mitem.open{ background:#e9f0fb; color:#10315e }
+.mspace{ flex:1 }
+.mtail{ display:flex; align-items:center; gap:4px; color:var(--ink-3); font-size:11.5px }
+.mtail .gbtn{ padding:3px 9px }
+/* dropdown */
+.dmenu{
+  position:fixed; z-index:200; min-width:248px; padding:5px;
+  background:var(--panel); border:1px solid var(--line); border-radius:7px;
+  box-shadow:0 14px 38px rgba(12,24,58,.2); animation:fa .12s ease-out;
+}
+.drow{
+  display:flex; align-items:center; gap:9px; padding:5.5px 26px 5.5px 7px; border-radius:5px;
+  font-size:12.5px; color:#30363f; cursor:default; position:relative; white-space:nowrap;
+}
+.drow .dic{ width:20px; text-align:center; color:#5b6472; flex:none }
+.drow .dic svg{ width:15px; height:15px }
+.drow .dhint{ margin-left:auto; padding-left:22px; color:#9aa2af; font-size:11px }
+.drow:hover{ background:#eaf1fd; color:#10315e }
+.drow:hover .dic{ color:var(--acc) }
+.drow.dis{ color:#a9b0bb; pointer-events:none }
+.drow.on::before{
+  content:"✓"; position:absolute; left:8px; font-size:11px; color:var(--acc); font-weight:700;
+}
+.dsep{ height:1px; background:var(--line-2); margin:5px 8px }
+.dglyph{ font-size:15px; line-height:1 }
+
+/* ---------- ribbon ---------- */
+.ribbon{
+  flex:none; background:linear-gradient(#fafbfc,#f1f3f6); border-bottom:1px solid #d3d8df;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset; position:relative; z-index:60; user-select:none;
+}
+.rtabs{ display:flex; align-items:flex-end; gap:3px; padding:0 10px; height:26px }
+.rtab{
+  padding:4px 14px 2px; font-size:12.5px; font-weight:600; color:#454c56; border-radius:6px 6px 0 0;
+  display:flex; gap:7px; align-items:center;
+}
+.rtab .ic svg{ width:14px; height:14px; color:#6b7480 }
+.rtab:hover{ background:#e9edf3 }
+.rtab.on{ background:#fff; color:var(--acc); box-shadow:0 -1px 0 #fff, 1px 0 0 #e3e7ec, -1px 0 0 #e3e7ec }
+.rtab.on .ic{ color:var(--acc) }
+.rhead{ margin-left:auto; display:flex; align-items:center; gap:8px; padding-right:4px }
+.rheadq{ display:flex; gap:2px; align-items:center; padding-right:10px; border-right:1px solid var(--line-2) }
+.rheadq .icbtn{ width:24px; height:24px; border-radius:5px; display:grid; place-items:center; color:#4b5361 }
+.rheadq .icbtn:hover{ background:#e7edf6 }
+.rstrip{ display:flex; align-items:stretch; background:#fff; border-top:1px solid #e3e7ec; padding:4px 10px 3px; min-height:84px; overflow:hidden }
+.rgroup{
+  display:flex; flex-direction:column; gap:5px; padding:2px 12px 0;
+  border-right:1px solid #e6e9ed; min-width:0;
+}
+.rgroup:last-child{ border-right:0 }
+.rrow{ display:flex; gap:3px; align-items:flex-start; flex-wrap:wrap }
+.rrow + .rrow{ margin-top:2px }
+.gcap{ margin-top:auto; text-align:center; font-size:10.5px; color:#7d8694; letter-spacing:.2px; padding-top:3px }
+.rbtn{
+  display:flex; flex-direction:column; align-items:center; gap:3px; width:58px; padding:5px 2px 3px;
+  border-radius:5px; border:1px solid transparent; color:#333a44; cursor:default; text-align:center;
+}
+.rbtn svg{ width:19px; height:19px }
+.rbtn span{ font-size:10.5px; line-height:1.15; color:#4a525e }
+.rbtn:hover{ background:#eff5fd; border-color:#d5e2f5 }
+.rbtn:active, .rbtn.on{ background:#dfe9f8; border-color:#b9cfee }
+.rbtn.on svg{ color:var(--acc); font-weight:700 }
+.rbtn.dis{ opacity:.42; pointer-events:none }
+.rbtn.sm{ width:27px; height:27px; padding:0; flex-direction:row }
+.rbtn.sm svg{ width:16px; height:16px }
+.rsmrow{ display:flex; gap:3px }
+.rbtn.big{ width:74px }
+.rcombos{ display:flex; gap:4px; align-items:center }
+.selwrap{
+  display:flex; flex-direction:column; gap:2px; justify-content:flex-start;
+}
+.selwrap.lead{ margin-right:6px }
+.selwrap select{
+  height:25px; font-size:12px; padding:0 6px; border-radius:4px; border-color:#cfd6df; background:#fff;
+}
+.selwrap select.ff{ width:148px }
+.selwrap select.fs{ width:64px }
+.cbot{ display:flex; gap:3px; margin-top:2px }
+.styleb{
+  display:flex; flex-direction:column; align-items:stretch; width:74px; padding:4px 7px 5px;
+  border-radius:5px; border:1px solid transparent; text-align:left;
+}
+.styleb:hover{ background:#eff5fd; border-color:#d5e2f5 }
+.styleb b{ font-size:12px; line-height:1.15 }
+.styleb i{ font-size:10px; color:#8b93a1; font-style:normal; line-height:1.2 }
+.styleb .smp{ display:block; font-size:13px; white-space:nowrap; overflow:hidden }
+.styleb.s-title .smp{ font-size:15px; font-weight:700; letter-spacing:.4px }
+.styleb.s-h1 .smp{ font-size:14.5px; font-weight:700; color:#c13030 }
+.styleb.s-h2 .smp{ font-size:13.5px; font-weight:600; color:#b3541e }
+.styleb.s-h3 .smp{ font-size:12.5px; font-weight:600; color:#3e7d3c }
+.styleb.s-quote .smp{ font-style:italic; color:#4a56a8 }
+.cbtn{ position:relative; width:27px; height:27px; border-radius:5px; border:1px solid transparent }
+.cbtn:hover{ background:#eff5fd; border-color:#d5e2f5 }
+.cbtn .crail{
+  position:absolute; left:5px; right:5px; bottom:2px; height:4px; border-radius:2px;
+  border:1px solid rgba(0,0,0,.25);
+}
+.cmenu{ position:fixed; z-index:210; background:#fff; border:1px solid var(--line); border-radius:7px;
+  box-shadow:0 12px 30px rgba(12,24,58,.2); padding:8px; display:grid; grid-template-columns:repeat(6,22px); gap:5px }
+.cmenu button{ width:22px; height:22px; border-radius:4px; border:1px solid rgba(0,0,0,.14); cursor:default }
+.cmenu button:hover{ outline:2px solid #185abd; outline-offset:1px }
+.ribbon.min .rstrip{ display:none }
+
+/* ---------- doc tabstrip ---------- */
+.tabstrip{
+  flex:none; display:flex; align-items:flex-end; gap:5px; padding:8px 14px 0; background:var(--band);
+  border-bottom:1px solid var(--line);
+}
+.wtab{
+  display:flex; align-items:center; gap:8px; padding:8px 16px 7px; font-size:12.5px; font-weight:600;
+  color:#4d545e; background:#f0f2f5; border:1px solid #e2e5e9; border-bottom:0;
+  border-radius:7px 7px 0 0; position:relative; top:1px; white-space:nowrap;
+}
+.wtab .ic svg{ width:14px; height:14px; color:#7c8798 }
+.wtab:hover{ background:#f5f7fa; color:#2c323a }
+.wtab.on{ background:#fff; color:#173a66; border-color:var(--line); box-shadow:inset 0 3px 0 var(--acc) }
+.wtab.on .ic svg{ color:var(--acc) }
+.wtab .cnt{ font-size:10px; font-weight:700; background:#e3eaf3; color:#4d5f7d; border-radius:9px; padding:1px 7px }
+.wspace{ flex:1 }
+.wtabrid{ display:flex; gap:6px; align-items:center; padding-bottom:7px; color:var(--ink-3); font-size:11.5px }
+
+/* ---------- work / panels ---------- */
+.work{ flex:1; min-height:0; background:#e6e9ee }
+[data-theme="dark"] .work{ background:#15181d }
+.panel{ height:100%; overflow:auto }
+[data-theme="dark"] .panel{ scrollbar-color:#5a606a transparent }
+
+/* ---------- statusbar ---------- */
+.statusbar{
+  height:26px; flex:none; display:flex; align-items:center; gap:14px; padding:0 12px;
+  background:#f8f9fb; border-top:1px solid var(--line); font-size:11.5px; color:#5d6572; z-index:50;
+}
+.sit{ display:flex; align-items:center; gap:6px; white-space:nowrap }
+.sit svg{ width:13px; height:13px; color:#8b94a2 }
+.sit b{ color:#2f3742; font-weight:600 }
+.szoom{ margin-left:auto; display:flex; align-items:center; gap:7px }
+.szoom .rg{ width:0; height:14px; border-left:2px solid #8b94a2; border-right:2px solid #8b94a2 }
+.szoom input[type=range]{ width:132px; accent-color:var(--acc); height:4px }
+.sbtn{ width:22px; height:22px; border-radius:4px; display:grid; place-items:center; color:#5d6572 }
+.sbtn:hover{ background:#e9edf4 }
+
+/* ---------- responsive collapse ---------- */
+@media (max-width:1180px){
+  .rgroup{ padding:2px 8px 0 }
+  .rbtn{ width:46px } .rbtn span{ font-size:9.5px } .rbtn.big{ width:56px }
+  .selwrap select.ff{ width:104px }
+  .styleb{ width:56px } .styleb i{ display:none }
+}
+@media (max-width:900px){
+  .rstrip{ overflow-x:auto } .rgroup{ flex:none } .mtail{ display:none }
+}

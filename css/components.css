@@ -1,0 +1,111 @@
+/* ============================================================
+   EPIC MODE — dcomponents.css
+   کارت، دکمه، ورودی، نشان ،چک‌باکس، توست
+   ============================================================ */
+
+/* ---------- کارت عمومی ---------- */
+.card{position:relative;background:linear-gradient(165deg,var(--panel2),var(--panel) 72%);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:0 24px 50px -34px #000}
+.card.pain{overflow:hidden}
+.card.pain::after{content:'';position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(420px 190px at 88% -40px,rgba(255,47,36,.14),transparent 70%),
+  radial-gradient(380px 180px at 0% 110%,rgba(255,138,0,.12),transparent 70%)}
+.veil{position:absolute;inset:0;pointer-events:none;opacity:.05;background-image:repeating-linear-gradient(45deg,transparent 0 9px,rgba(255,255,255,.16) 9px 10px)}
+@media(max-width:720px){.veil{display:none}}
+
+/* ---------- سربخش ---------- */
+.secbar{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;padding:26px 26px 8px}
+.secbar .accum{display:flex;flex-direction:column;gap:12px}
+.secbar .kicker{display:inline-flex;align-items:center;gap:9px;color:var(--orange);font-weight:800;font-size:.8rem;letter-spacing:.14em}
+.secbar .kicker svg.i{color:var(--red)}
+.secbar .kicker::after{content:'';width:52px;height:2px;background:var(--grad);border-radius:9px;opacity:.8}
+.secbar h2{display:flex;align-items:center;gap:11px;font-size:clamp(1.35rem,3vw,1.9rem);font-weight:900;color:#fff}
+.secbar h2 .ic i{display:flex;color:var(--red);filter:drop-shadow(0 0 11px rgba(255,47,36,.7))}
+.secbar .lens{background:radial-gradient(240px 92px at 30% 0%,rgba(255,47,36,.14),transparent 70%);position:relative}
+.kicker .shim{display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--grad);animation:blink 2.2s infinite}
+@keyframes blink{0%,92%{opacity:1}94%,100%{opacity:.2}}
+
+/* ---------- بدنه بخش ---------- */
+.secbody{padding:16px 26px 26px}
+@media(max-width:720px){.secbody,.secbar{padding-inline:14px}.secbody{padding-block:10px 20px}}
+
+/* ---------- دکمه‌ها ---------- */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:800;border-radius:14px;padding:12px 20px;font-size:.94rem;transition:transform var(--dur),box-shadow var(--dur),filter var(--dur),background-color var(--dur);user-select:none}
+.btn .i{transition:transform .3s}
+.btn:hover:not(:disabled) .i{transform:scale(1.16) rotate(-6deg)}
+.btn:active{transform:scale(.96)}
+.bfire{color:#fff;background:linear-gradient(135deg,var(--red) 6%,var(--orange) 96%);box-shadow:0 10px 26px -9px rgba(255,47,36,.65),inset 0 1px 0 rgba(255,255,255,.32)}
+.bfire:hover:not(:disabled){filter:brightness(1.08);box-shadow:0 14px 32px -8px rgba(255,47,36,.8)}
+.bghost{color:var(--ink);border:1px solid var(--line2);background:rgba(255,255,255,.03)}
+.bghost:hover{color:#fff;border-color:var(--orange);background:rgba(255,138,0,.09)}
+.bmicro{padding:7px 13px;font-size:.8rem;border-radius:11px}
+.cell{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:12px;border:1px solid var(--line2);padding:8px 15px;color:var(--ink2);font-weight:700;font-size:.85rem;transition:all var(--dur)}
+.cell:hover{color:#fff;border-color:var(--orange);background:rgba(255,138,0,.08)}
+.cell.on{color:#fff;border-color:transparent;background:rgba(255,47,36,.16)}
+.cell.on::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--grad);box-shadow:0 0 9px var(--red)}
+
+/* ---------- فیلد ---------- */
+.field{position:relative;display:flex;align-items:center}
+.field svg.i{position:absolute;inset-inline-start:13px;color:var(--ink3);pointer-events:none;transition:color var(--dur)}
+.field input,.field textarea{width:100%;background:rgba(7,6,10,.66);border:1px solid var(--line2);border-radius:14px;color:#fff;padding:12px 13px;padding-inline-start:39px;font-size:.95rem;transition:border-color var(--dur),box-shadow var(--dur),background-color var(--dur)}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink3)}
+.field input:focus,.field textarea:focus{border-color:var(--orange);box-shadow:0 0 0 3.5px rgba(255,138,0,.16),0 8px 20px -10px rgba(255,138,0,.5)}
+.field input:focus~svg.i,.field:has(input:focus) svg.i,.field:focus-within svg.i{color:var(--orange)}
+textarea{resize:vertical;min-height:82px;line-height:1.9}
+textarea{font-family:inherit;font-size:.95rem}
+input[type=date]{font-family:Vazirmatn}
+input[type=time]{color-scheme:dark}
+.field textarea{padding-inline-start:13px;padding-top:36px;padding-bottom:12px}
+.field .tools{position:absolute;inset-inline-end:8px;bottom:8px}
+
+/* ---------- نشان‌ها ---------- */
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:9px;background:rgba(255,255,255,.05);color:var(--ink2);border:1px solid var(--line2);white-space:nowrap}
+.tag.molten{color:#fff;background:linear-gradient(135deg,var(--red),var(--orange));border-color:transparent;box-shadow:0 4px 14px -4px rgba(255,47,36,.7)}
+.tag.rocket{color:var(--orange);border-color:rgba(255,138,0,.5);background:rgba(255,138,0,.09)}
+.tag.blue{color:#ffd166}
+.tag .i{width:.95em;height:.95em}
+.tag.warn{color:var(--red);border-color:rgba(255,47,36,.5);background:rgba(255,47,36,.1)}
+
+/* ---------- چک‌باکس ---------- */
+.chk{position:relative;display:grid;place-items:center;width:25px;height:25px;flex:none;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--line2);transition:all var(--dur)}
+.chk .i{opacity:0;width:16px;height:16px;color:#fff}
+.chk[aria-checked=true]{border-color:transparent;background:linear-gradient(135deg,var(--red),var(--orange));box-shadow:0 0 16px rgba(255,47,36,.65);transform:scale(1.04)}
+.chk[aria-checked=true] .i{opacity:1}
+.chk[aria-checked=true] .i polyline{stroke-dashoffset:1;color:#fff;transition:stroke-dashoffset .16s .04s}
+
+/* ---------- سوییچ ---------- */
+.pick{width:42px;height:24px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid var(--line2);position:relative;transition:background-color var(--dur);flex:none}
+.pick::after{content:'';position:absolute;top:2.1px;inset-inline-start:2.1px;width:18.4px;height:18.4px;border-radius:50%;background:linear-gradient(135deg,#444,#252525);border:1px solid rgba(255,255,255,.14);transition:inset-inline-start var(--dur),background var(--dur)}
+.pick[aria-checked=true]{background:rgba(255,47,36,.3)}
+.pick[aria-checked=true]::after{inset-inline-start:calc(100% - 20.5px);background:linear-gradient(135deg,var(--red),var(--orange));box-shadow:0 0 13px rgba(255,138,0,.75)}
+
+/* ---------- چیدمان فیلدها ---------- */
+.fields{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.fields .field{flex:1 1 200px}
+.hint{color:var(--ink3);font-size:.76rem;font-weight:600}
+.btnwrap{display:flex;gap:9px;flex-wrap:wrap}
+.bwrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+/* ---------- حالت خالی ---------- */
+.empty{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--ink3);font-weight:700;padding:34px 10px;text-align:center}
+.empty .i{width:44px;height:44px;color:var(--line2)}
+@keyframes floaty{0%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}100%{transform:translateY(0) rotate(-3deg)}}
+
+/* ---------- توست ---------- */
+#toasts{position:fixed;bottom:18px;inset-inline-start:18px;z-index:80;display:flex;flex-direction:column;gap:9px;max-width:min(340px,86vw)}
+#toasts.warn{border-color:var(--red2)}
+.toast{display:flex;align-items:center;gap:10px;background:rgba(20,16,25,.95);border:1px solid var(--orange);border-radius:14px;padding:12px 20px;font-weight:700;font-size:.9rem;box-shadow:0 16px 40px -12px #000,0 0 22px -6px rgba(255,138,0,.5);animation:toastin .3s cubic-bezier(.2,.9,.25,1.3)}
+.toast.out{animation:toastout .26s forwards}
+.toast .i{color:var(--orange)}
+.toast b{color:#fff}
+@keyframes toastin{from{opacity:0;transform:translateY(14px) scale(.92)}}
+@keyframes toastout{to{opacity:0;transform:translateY(10px) scale(.94)}}
+
+/* ---------- پاپ‌اور ---------- */
+.ground{backdrop-filter:blur(4px);animation:fadein .2s}
+@keyframes fadein{from{opacity:0}}
+.confirm{background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-radius:22px;box-shadow:0 30px 70px -18px #000;width:min(420px,92vw);padding:22px;animation:pop .28s cubic-bezier(.2,.9,.25,1.25)}
+@keyframes pop{from{opacity:0;transform:scale(.9) translateY(12px)}}
+.confirm h3{display:flex;align-items:center;gap:9px;font-size:1.05rem;font-weight:900;color:#fff;margin-bottom:6px}
+.confirm h3 .i{color:var(--red)}
+.confirm p{color:var(--ink2);font-size:.9rem;margin-bottom:16px}
+.confirm .btnwrap{justify-content:flex-end}

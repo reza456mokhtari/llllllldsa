@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" data-theme="office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EpicWord — Word Clone · AI Chronicle Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/views.css">
+</head>
+<body>
+  <header id="menubar" class="menubar" role="menubar"></header>
+  <div id="ribbon" class="ribbon"></div>
+  <nav id="tabstrip" class="tabstrip"></nav>
+
+  <main id="work" class="work">
+    <section id="panel-todo" class="panel" data-panel="todo" hidden></section>
+    <section id="panel-ai" class="panel" data-panel="ai">
+      <div class="aitabs">
+        <button class="aitsub on" data-sub="write" type="button">WRITE — Author's Draft</button>
+        <button class="aitsub" data-sub="read" type="button">READ — Active Chronicle</button>
+        <div class="aispace"></div>
+        <span id="ckchip" class="ckchip" title="Automatic local checkpoint">○ no checkpoint yet</span>
+        <button id="btnRestore" class="gbtn tiny" type="button" title="Restore latest checkpoint">↺ RESTORE</button>
+      </div>
+      <div id="pane-w" class="aipane"></div>
+      <div id="pane-r" class="aipane" hidden></div>
+    </section>
+    <section id="panel-table" class="panel" data-panel="table" hidden></section>
+  </main>
+
+  <footer id="statusbar" class="statusbar"></footer>
+  <div id="host-dialogs"></div>
+  <input type="file" id="fileOpen" accept=".txt,.md,.csv,.html,.htm,.json" hidden>
+  <input type="file" id="fileImg" accept="image/*" hidden>
+  <input type="file" id="fileCsv" accept=".csv" hidden>
+
+  <script src="js/core.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/todo.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/menubar.js"></script>
+  <script src="js/ribbon.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

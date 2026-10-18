@@ -1,0 +1,9 @@
+{
+  "name": "epicword",
+  "productName": "EpicWord",
+  "version": "1.0.0",
+  "description": "Word Clone with GLM-5.3-Flash AI Chronicle Engine",
+  "main": "main.js",
+  "scripts": { "start": "electron ." },
+  "devDependencies": { "electron": "^31.0.0" }
+}
