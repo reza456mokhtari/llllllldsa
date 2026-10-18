@@ -66,6 +66,16 @@ window.W = window.W || {};
     },
   };
 
+  /* quota compaction: outputs are archived in IndexedDB — trim heavy fields here */
+  function compact() {
+    try {
+      const outs = state.ai.outputs || [];
+      outs.forEach((o, i) => { if (i > 7) { delete o.html; delete o.reportLines; o.archived = true; } });
+      state.ai.ckpts = state.ai.ckpts.slice(-6);
+      localStorage.setItem(KEY, JSON.stringify(store.state));
+    } catch (e) { /* truly full — the toast already fired */ }
+  }
+
   const store = {
     state,
     load() {
@@ -92,9 +102,13 @@ window.W = window.W || {};
       return state;
     },
     save: W.debounce(() => {
-      try { localStorage.setItem(KEY, JSON.stringify(store.state)); } catch (e) { /* quota */ }
+      try { localStorage.setItem(KEY, JSON.stringify(store.state)); }
+      catch (e) { compact(); try { W.toast && W.toast('Storage quota hit — heavy fields trimmed; chronicle texts stay in the db archive', 'warnc', 5200); } catch (e2) {} }
     }, 220),
-    flush() { try { localStorage.setItem(KEY, JSON.stringify(store.state)); } catch (e) {} },
+    flush() {
+      try { localStorage.setItem(KEY, JSON.stringify(store.state)); }
+      catch (e) { compact(); try { W.toast && W.toast('Storage quota hit — heavy fields trimmed; chronicle texts stay in the db archive', 'warnc', 5200); } catch (e2) {} }
+    },
     export() { return JSON.stringify({ app: 'epicword', ver: 1, at: new Date().toISOString(), state: store.state }, null, 1); },
     wipeAll() {
       try { localStorage.removeItem(KEY); } catch (e) {}
@@ -107,6 +121,7 @@ window.W = window.W || {};
       state.ai.temp = 0.85; state.ai.maxTok = 1600; state.ai.webOn = true;
       state.ai.thinkOn = true; state.ai.offlineAuto = true; state.ai.speed = 13;
       state.ai.ckpts = []; state.ai.story = null; state.ai.outputs = []; state.ai.ledger = [];
+      if (W.DB) { try { W.DB.clear(); } catch (e) {} }
       state.prefs = { theme: 'office', zoom: 100, statusbar: true, ribbonMin: false };
     },
   };

@@ -155,6 +155,7 @@ window.W = window.W || {};
     }
     rows.forEach((rw, i) => {
       const tr = W.el('tr');
+      if (rw.aiNew && !rw.aiSeen && Date.now() - rw.aiNew < 300000) tr.classList.add('ai-new');
       tr.append(W.el('td', { class: 'num', text: String(i + 1) }));
       cols.forEach(col => {
         const td = W.el('td', { contenteditable: 'true', spellcheck: 'false', text: cellVal(rw, col.id), 'data-cid': col.id, title: 'Double-click header or click to sort' });
@@ -175,12 +176,40 @@ window.W = window.W || {};
       tbody.append(tr);
     });
     grid.append(tbody);
+    const hot = tbody.querySelector('.ai-new');
+    if (hot) {
+      rows.forEach(rw2 => { if (rw2.aiNew && !rw2.aiSeen && Date.now() - rw2.aiNew < 300000) rw2.aiSeen = true; });
+      W.store.save();
+      if (root() && !root().hidden) { try { hot.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} }
+    }
 
     r.innerHTML = '';
     r.append(ledgerPanel(), bar, W.el('div', { class: 'dtwrap' }, grid));
   }
 
   /* ---------- AI delivery ledger — طرح · ژانر · کیفیت ---------- */
+  const AI_COLS = ['Title', 'Description', 'Genre', 'Theme', 'Quality', 'Engine', 'Words', 'ChronicleID', 'CreatedAt'];
+  function ensureAiCols() {
+    const d = D();
+    AI_COLS.forEach(name => {
+      if (!d.cols.some(c => (c.name || '').toLowerCase() === name.toLowerCase())) d.cols.push({ id: W.uid(), name });
+    });
+  }
+  function upsertAiRow(ent) {
+    ensureAiCols();
+    const d = D();
+    const cidCol = d.cols.find(c => (c.name || '').toLowerCase() === 'chronicleid');
+    let row = cidCol ? d.rows.find(r => String(cellVal(r, cidCol.id)) === ent.id) : null;
+    if (!row) { row = { id: W.uid(), c: {} }; d.rows.unshift(row); }
+    const M = {
+      title: ent.title, description: ent.description, genre: ent.genre, theme: ent.theme,
+      quality: ent.score + ' · ' + ent.grade, engine: ent.engine, words: String(ent.words),
+      chronicleid: ent.id, createdat: new Date(ent.ts).toLocaleString(),
+    };
+    d.cols.forEach(col => { const v = M[(col.name || '').toLowerCase()]; if (v !== undefined) row.c[col.id] = v; });
+    row.aiNew = Date.now();
+    row.aiSeen = false;
+  }
   function classify(input, meta) {
     const t = String(input || '').toLowerCase();
     const has = ks => ks.some(k => t.indexOf(k) !== -1);
@@ -220,13 +249,16 @@ window.W = window.W || {};
     return { genre, theme: hits.join(' + '), score: q, grade };
   }
 
-  function logDelivery(input, meta, rep) {
+  function logDelivery(input, meta, rep, extra) {
     try {
-      const cl = classify(input, meta);
+      extra = extra || {};
+      const cl = extra.cl || classify(input, meta);
       const f6 = W.ai.first6(input);
       const ent = {
         ts: Date.now(), at: meta.at,
         subject: f6.six + (f6.hasMore ? '…' : ''),
+        title: extra.title || f6.six,
+        description: extra.description || '',
         theme: cl.theme, genre: cl.genre, score: cl.score, grade: cl.grade,
         engine: meta.provider === 'api' ? ('GLM · ' + (meta.model || 'glm')) : 'Ember Scribe (local)',
         id: rep.id, words: meta.words || 0, secs: meta.secs || '0.0',
@@ -234,6 +266,7 @@ window.W = window.W || {};
       const lg = W.store.state.ai.ledger = (W.store.state.ai.ledger || []);
       lg.unshift(ent);
       while (lg.length > 120) lg.pop();
+      upsertAiRow(ent);
       W.store.save(); W.store.flush();
       const pane = root();
       if (pane && pane.querySelector('.ailedger')) render();

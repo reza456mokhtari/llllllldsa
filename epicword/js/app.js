@@ -14,6 +14,9 @@ window.W = window.W || {};
       if (id !== undefined) curTab = id;
       if (sub) curSub = sub;
       ['todo', 'ai', 'table'].forEach(k => { const p = document.getElementById('panel-' + k); if (p) p.hidden = k !== curTab; });
+      /* Word ribbon is document chrome — hide it on TODO / DATATABLE */
+      const rib = document.getElementById('ribbon');
+      if (rib) rib.style.display = (curTab === 'ai') ? '' : 'none';
       $$('.wtab').forEach(t2 => t2.classList.toggle('on', t2.dataset.tab === curTab));
       if (curTab === 'ai') tab.sub(curSub);
       if (curTab === 'todo') W.todo.render();
@@ -27,7 +30,10 @@ window.W = window.W || {};
       const pw = document.getElementById('pane-w'), pr = document.getElementById('pane-r');
       pw.hidden = id !== 'write'; pr.hidden = id !== 'read';
       $$('.aitsub').forEach(b => b.classList.toggle('on', b.dataset.sub === id));
-      if (id === 'read') W.ai.chip(!!W.store.state.ai.ckpts.length);
+      if (id === 'read') {
+        W.ai.chip(!!W.store.state.ai.ckpts.length);
+        if (W.ai.idleRead) W.ai.idleRead();
+      }
     },
     cur: () => curTab,
     curSub: () => curSub,
@@ -367,6 +373,15 @@ window.W = window.W || {};
 
   /* ---------------- boot ---------------- */
   function boot() {
+    /* db/db.js must exist — reload with cache-bust, eval-fallback if the tag was served stale */
+    if (!W.DB) {
+      const s2 = document.createElement('script');
+      s2.src = 'db/db.js?v=' + Date.now();
+      s2.onerror = () => {
+        fetch('db/db.js?v=' + Date.now()).then(r => r.text()).then(txt => { try { new Function(txt)(); } catch (e) { console.error('db bootstrap failed', e); } }).catch(() => {});
+      };
+      document.head.append(s2);
+    }
     W.store.load();
     document.documentElement.dataset.theme = W.store.state.prefs.theme || 'office';
     if (W.store.state.prefs.ribbonMin) document.getElementById('ribbon').classList.add('min');

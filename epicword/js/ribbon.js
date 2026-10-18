@@ -15,7 +15,7 @@ window.W = window.W || {};
     opts = opts || {};
     const b = W.el('button', { class: 'rbtn' + (opts.cls || '') + (opts.id ? '' : ''), type: 'button' });
     if (opts.id) b.dataset.cmd = opts.id;
-    b.append(W.icon(iconName, opts.iconSize || 19));
+    b.append(W.icon(iconName, opts.iconSize || 17));
     if (label !== null) b.append(W.el('span', { text: label }));
     b.addEventListener('click', e => { e.stopPropagation(); fn && fn(b); });
     return b;

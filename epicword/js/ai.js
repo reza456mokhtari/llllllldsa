@@ -36,7 +36,7 @@ window.W = window.W || {};
   async function callGLM(messages, onToken, opts) {
     const c = AI();
     const url = (c.base || '').replace(/\/+$/, '') + '/chat/completions';
-    const start = Date.now(), DEADLINE = 15000;  /* whole chain ≤ ~15s */
+    const start = Date.now(), DEADLINE = 60000;  /* whole chain ≤ ~60s (long-form safe) */
     const body = {
       model: c.model || 'glm-5.3-flash-free',
       messages,
@@ -57,7 +57,7 @@ window.W = window.W || {};
       let aReason = null;
       ctl.__userAbort = () => { aReason = 'user'; try { ctl.abort(); } catch (e) {} };
       const left = DEADLINE - (Date.now() - start);
-      const tid = setTimeout(() => { aReason = 'timeout'; try { ctl.abort(); } catch (e) {} }, Math.max(2500, Math.min(9000, left)));
+      const tid = setTimeout(() => { aReason = 'timeout'; try { ctl.abort(); } catch (e) {} }, Math.max(2500, Math.min(25000, left)));
       let res;
       try {
         res = await fetch(url, {
@@ -120,44 +120,70 @@ window.W = window.W || {};
     }
   }
 
-  /* ============ OFFLINE SCRIBE — deterministic ember engine ============ */
+  /* ============ OFFLINE SCRIBE — deterministic ember engine (varied structures) ============ */
+  let scribeRun = 0;
+  const SX = {
+    open: [
+      s => 'The herald came with ash on its boots: nothing crosses the threshold of ' + s.subject + ' unchanged.',
+      s => 'Before the first wall was raised, ' + s.subject + ' was already an oath — and ' + s.k1 + ' outlives the mouth that swears it.',
+      s => 'They say ' + s.subject + ' began as a wound; every wound in this world learns to wear the armor of ' + s.k1 + '.',
+      s => 'Past the third rust-bitten gate, the road to ' + s.subject + ' is lit by nothing but ' + s.k2 + ' and the memory of the road.',
+      s => 'Name a thing truly — ' + s.subject + ' — and the thing begins naming you back in the tongue of ' + s.k1 + '.',
+      s => 'The scribes of Emberfall keep two ledgers: one for what was paid, one for ' + s.subject + '.',
+      s => 'Winter kept its own counsel about ' + s.subject + ', and ' + s.k2 + ' kept its silence.',
+      s => 'Every ruin is a sentence that refused to end; so it was with ' + s.subject + '.',
+    ],
+    lore: [
+      s => 'What remains of ' + s.k1 + ' hangs in the deep archive — half scripture, half rust, the geology of a hope asked to carry too much.',
+      s => 'The elders of the fall will not speak ' + s.k1 + ' aloud; names spoken with appetite return with appetites of their own.',
+      s => 'Stone remembers; ' + s.k2 + ' remembers longer. Around their absence everything quietly rearranged itself, the way bone rearranges around an old break.',
+      s => 'Where the light failed, ritual took root around ' + s.k1 + '; where ritual failed, the breaking wrote itself into every ledger of the deep.',
+      s => 'They mapped ' + s.k2 + ' three centuries ago, and the map has been apologizing ever since.',
+    ],
+    visit: [
+      s => 'The visitor crossed the salt threshold barefoot, unhosted, burned by the personal weather of ' + s.subject + '.',
+      s => 'A seeker arrived with ' + s.k1 + ' tempered three times in grief, carrying the last honest question of a broken century.',
+      s => 'A pilgrim came dressed in borrowed mercy, asked after ' + s.k2 + ', and left dressed in experience.',
+      s => 'No one guides the way to ' + s.subject + '; the way accepts candidates and conducts its own interviews.',
+    ],
+    doom: [
+      s => 'Then the brand burned — the mark that says you are claimed by a story too large to survive politely, and ' + s.k1 + ' knew its keeper.',
+      s => 'The sky curdled to iron; sieges began above the clouds of ' + s.k2 + ', and the thunder that rolled down was applause.',
+      s => 'It arrived at scale: an avalanche of consequence wearing the face of ' + s.k1 + ', ten thousand masks deep.',
+      s => 'The debt called in its collateral — every vow spoken over ' + s.subject + ' came home carrying interest.',
+    ],
+    verdict: [
+      'What is taken from the fire is not the fire. The law stands: bleed true, then write. As Emberfall endures, so endures the testimony.',
+      'In the end nothing was owed but the telling, and the telling was paid in full.',
+      'Those who carry it onward will not be thanked; that is how you can tell it was worth carrying.',
+      'Let the archive note it once, without ornament: it held. Let the silence after it be agreement.',
+    ],
+  };
+  const STRUCTURES = [
+    ['open', 'lore', 'visit', 'doom', 'verdict'],
+    ['open', 'visit', 'lore', 'doom', 'verdict'],
+    ['open', 'doom', 'lore', 'visit', 'verdict'],
+    ['visit', 'open', 'doom', 'lore', 'verdict'],
+    ['open', 'lore', 'doom', 'visit', 'verdict'],
+    ['lore', 'open', 'visit', 'doom', 'verdict'],
+  ];
   function scribe(input) {
-    const hs = W.hash(input + '|' + Math.floor(Date.now() / 6e4));
-    const pick = (arr, salt) => arr[(hs + (salt || 0) * 7) % arr.length];
+    scribeRun++;
     const words = input.trim().split(/\s+/).filter(Boolean);
-    const seed = (words.length > 12 ? words.slice(0, 12).join(' ') : input.trim()).replace(/[.?!]+$/, '');
-    const O = {
-      open: [
-        'The herald came with ash on its boots to tell it: nothing is carried across the threshold of ' + seed + ' unchanged.',
-        'Before the first wall was raised, ' + seed + ' was already an oath, and oaths outlive the mouths that swear them.',
-        'Somewhere past the third rust-bitten gate, the road to ' + seed + ' is lit by nothing but the memory of the road.',
-        'They say ' + seed + ' began as a wound, and every wound in this world learns to wear armor.',
-      ],
-      lore: [
-        'What remains of it hangs in the deep archive — half-shredded scripture, half-rusted iron, the geology of a hope that was asked to carry too much.',
-        'The elders of the fall refuse to speak above a whisper regarding it, for names spoken with appetite return with appetites of their own.',
-        'Stone remembers; ember remembers longer. Around its absence the order of everything quietly rearranged itself, the way bone rearranges around an old break.',
-        'Where the light failed, ritual took root. Where ritual failed, ritual was broken, and the breaking wrote itself into every ledger of the deep.',
-      ],
-      visit: [
-        'The visitor crossed the salt threshold barefoot, unhosted, burned by the personal weather of the place.',
-        'A seeker arrived, sword tempered three times in grief, carrying the last honest question of a broken century.',
-        'A pilgrim came dressed in borrowed mercy and left dressed in experience.',
-      ],
-      doom: [
-        'Then the brand burned — the mark that tells you that you are claimed by a story too large to survive politely.',
-        'The sky curdled to iron. Somewhere above the clouds, sieges of the far theater began, and the thunder that rolled down was applause.',
-        'It arrived at scale: an avalanche of consequence, an army with a single purpose and ten thousand faces of it.',
-      ],
-      verdict: [
-        'What is taken from the fire is not the fire. The law stands: bleed true, then write. As Emberfall endures, so endures the testimony.',
-        'In the end nothing was owed but the telling. The telling was paid in full.',
-        'Those who carry it onward will not be thanked; that is how you can tell it was worth carrying.',
-      ],
+    const stop = /^(the|and|with|from|into|over|under|when|then|that|this|of|for|his|her|its|their|before|after)$/i;
+    const key = words.filter(w => w.length > 3 && !stop.test(w));
+    const S = {
+      subject: (words.length > 12 ? words.slice(0, 12).join(' ') : input.trim()).replace(/[.?!]+$/, ''),
+      k1: (key[0] || 'the old vow').toLowerCase(),
+      k2: (key[1] || key[0] || 'the drowned bell').toLowerCase(),
     };
-    const ps = [
-      pick(O.open, 1), pick(O.lore, 2), pick(O.visit, 3), pick(O.doom, 4), pick(O.verdict, 5) + '\n\n— Scarlet Archive, sealed folio ' + (1000 + hs % 9000),
-    ];
+    const hs = W.hash(input + '|' + scribeRun + '|' + Math.floor(Date.now() / 6e4));
+    const pick = (bank, salt) => bank[(hs + (salt || 0) * 11 + scribeRun * 3) % bank.length];
+    const structure = STRUCTURES[(hs + scribeRun) % STRUCTURES.length];
+    const ps = structure.map((part, i) => {
+      if (part === 'verdict') return pick(SX.verdict, i) + '\n\n— Scarlet Archive, sealed folio ' + (1000 + hs % 9000);
+      return pick(SX[part], i)(S);
+    });
     return ps.join('\n\n');
   }
 
@@ -324,8 +350,12 @@ window.W = window.W || {};
     let ctrl = '';
     const useApi = !!AI().key;      /* no key → local scribe demo engine */
     if (!useApi) meta.provider = 'scribe';
+    const statTimer = setInterval(() => {
+      if (statEl && curStream && curStream.timer) statEl.textContent = 'INKING · ' + ((performance.now() - t0) / 1000).toFixed(0) + 's · ' + (useApi ? 'GLM' : 'SCRIBE');
+    }, 500);
 
     const deliver = (providerExtra) => {
+      clearInterval(statTimer);
       meta.words = accumulated.trim() ? accumulated.trim().split(/\s+/).filter(Boolean).length : 0;
       meta.paras = accumulated.trim() ? accumulated.trim().split(/\n{2,}/).filter(x => x.trim()).length : 0;
       meta.drift = (8 + W.hash(accumulated) % 6);
@@ -335,15 +365,30 @@ window.W = window.W || {};
       const rep = buildReport(input, meta);
       renderReport(rep);
       finishStream(accumulated);
-      W.store.state.ai.story = { ts: Date.now(), input, html: sheetText2HTML(accumulated), report: rep.lines.join('\n'), meta };
+      /* smart title + description — rich record, not just six words */
+      const smartTitle = () => {
+        const line0 = input.split(/\n/)[0] || '';
+        let s = line0.replace(/[#>*_`\[\]]/g, '').replace(/\s+/g, ' ').trim() || input.replace(/\s+/g, ' ').trim();
+        const w2 = s.split(' ').filter(Boolean);
+        if (w2.length > 10) s = w2.slice(0, 10).join(' ');
+        return (s.length > 64 ? s.slice(0, 61) + '…' : s) || 'Untitled Chronicle';
+      };
+      const title = smartTitle();
+      const p0 = (accumulated.trim().split(/\n{2,}/)[0] || '').replace(/[#>*_`]/g, '').replace(/\s+/g, ' ').trim();
+      const description = p0.length > 180 ? p0.slice(0, 177) + '…' : p0;
+      const cl = (W.table && W.table.classify) ? W.table.classify(input, meta) : { genre: '—', theme: '—', score: 0, grade: 'B' };
+      const html = sheetText2HTML(accumulated);
+      W.store.state.ai.story = { ts: Date.now(), input, html, report: rep.lines.join('\n'), meta };
       const outs = W.store.state.ai.outputs;
-      outs.unshift({ ts: Date.now(), title: first6(input).six, id: rep.id, provider: meta.provider, web: !!meta.web, think: !!meta.think, html: sheetText2HTML(accumulated), reportLines: rep.lines });
-      while (outs.length > 6) outs.pop();
+      outs.unshift({ id: rep.id, ts: Date.now(), title, description, provider: meta.provider, model: meta.model, web: !!meta.web, think: !!meta.think, genre: cl.genre, theme: cl.theme, score: cl.score, grade: cl.grade, words: meta.words, html, reportLines: rep.lines });
+      while (outs.length > 60) outs.pop();
+      if (W.DB) { try { W.DB.put({ id: rep.id, ts: Date.now(), title, description, html, plain: accumulated, reportLines: rep.lines, provider: meta.provider, model: meta.model, genre: cl.genre, theme: cl.theme, score: cl.score, grade: cl.grade, words: meta.words, pinned: false }); } catch (e) {} }
       W.store.save();
+      W.store.flush();                       /* full text persisted immediately */
       refreshRecList();
       let ledSealed = false;
-      if (W.table && W.table.logDelivery) { ledSealed = !!W.table.logDelivery(input, meta, rep); }
-      W.toast((meta.provider === 'api' ? 'Chronicle delivered — ' + meta.words + ' words' : 'Ember scribe delivered — provider offline') + (ledSealed ? ' · ledger sealed in DATATABLE' : ''), 'ok');
+      if (W.table && W.table.logDelivery) { ledSealed = !!W.table.logDelivery(input, meta, rep, { title, description, cl }); }
+      W.toast((meta.provider === 'api' ? 'Chronicle delivered — ' + meta.words + ' words' : 'Ember scribe delivered — provider offline') + (ledSealed ? ' · DATATABLE row + ledger sealed' : ''), 'ok');
     };
 
     if (!useApi) {
@@ -354,6 +399,10 @@ window.W = window.W || {};
     /* true API path */
     let sys = PERSONA;
     if (AI().thinkOn) sys = THINK_LEAD + sys;
+    const clHint = (W.table && W.table.classify) ? W.table.classify(input, meta) : null;
+    if (clHint) sys += '\nREGISTER — this piece reads as ' + clHint.genre + '; motif register: ' + clHint.theme + '. Let the draft lead the cadence and structure; never force the same arc twice.';
+    const avoid = (AI().outputs || []).slice(0, 2).map(o => o.title).filter(Boolean);
+    if (avoid.length) sys += '\nANTI-REPETITION — the reader has just read these openings; do not reuse their patterns: ' + avoid.join(' | ') + '.';
     const msgs = [
       { role: 'system', content: sys },
       { role: 'user', content: input },
@@ -441,6 +490,10 @@ window.W = window.W || {};
         W.el('div', { class: 'rbtns' }, toWrite, copyBtn, stopBtn)),
       repBox,
       outEl));
+    if (!AI().key && opt.mode !== 'restored' && opt.mode !== 'idle') {
+      pane.firstElementChild.after(W.el('div', { class: 'rnote' }, W.icon('flame', 12),
+        'Running local ember scribe (limited variety) — add a GLM key in Tools → Preferences for the full engine.'));
+    }
     refreshRecList();
   }
   window.buildReadShell = buildReadShell;
@@ -469,7 +522,7 @@ window.W = window.W || {};
   }
   function finishStream(txt) {
     hoverCursor();
-    if (statEl) statEl.textContent = 'SEALED · ' + (txt.trim().split(/\s+/).filter(Boolean).length) + ' words';
+    if (statEl) statEl.textContent = 'COMPLETE · ' + (txt.trim().split(/\s+/).filter(Boolean).length) + ' words';
     if (metaChips) $$('.rchip', metaChips).forEach(c => c.classList.remove('off'));
     // paint last glyph: fade cursor after done
     setTimeout(() => { const c = $('.curcar'); c && c.remove(); }, 2600);
@@ -486,31 +539,65 @@ window.W = window.W || {};
     box.append(bar, lines);
     lines.scrollTop = lines.scrollHeight;
   }
-  function refreshRecList() {
+  async function refreshRecList() {
     document.querySelectorAll('.reclist').forEach(x => x.remove());
-    const outs = AI().outputs || [];
-    if (!outs.length) return;
     const rrap = document.querySelector('.rrap');
     if (!rrap) return;
+    /* merge: db archive (full, ≥50) + localStorage indexes — unique by id */
+    let recs = [];
+    try { recs = W.DB ? await W.DB.all() : []; } catch (e) { recs = []; }
+    const seen = {}, merged = [];
+    (recs || []).forEach(r => { if (r && r.id && !seen[r.id]) { seen[r.id] = 1; merged.push(r); } });
+    (AI().outputs || []).forEach(o => {
+      if (o && o.id && !seen[o.id]) { seen[o.id] = 1; merged.push({ id: o.id, ts: o.ts || 0, title: o.title, provider: o.provider, pinned: false, html: o.html, reportLines: o.reportLines }); }
+    });
+    merged.sort((a, b) => ((b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)) || ((b.ts || 0) - (a.ts || 0)));
+    if (!merged.length) return;
     const list = W.el('div', { class: 'reclist' });
-    outs.forEach(o => {
-      const b = W.el('button', { class: 'rec', type: 'button' }, W.el('b', { text: o.id }), o.title);
-      b.addEventListener('click', () => {
-        const stEl2 = document.getElementById('streambox');
-        if (stEl2) stEl2.innerHTML = o.html || '<p class="drop">…</p>';
-        if (o.id) {
-          const rb = document.getElementById('reportBox');
-          if (rb && o.reportLines) {
-            const ln = rb.querySelector('.lines');
-            ln.innerHTML = '';
-            o.reportLines.forEach(l => ln.append(W.el('div', { class: 'ln', text: l })));
-          }
-        }
-        W.toast('«' + o.title + '» re-opened · dossier intact', 'info');
+    merged.slice(0, 50).forEach(o => {
+      const b = W.el('button', { class: 'rec' + (o.pinned ? ' pin' : ''), type: 'button', title: o.title || o.id },
+        W.el('b', { text: (o.pinned ? '★ ' : '') + (o.id || '') }),
+        W.el('span', { class: 'rt', text: o.title || o.subject || '' }),
+        W.el('i', { class: 'rp', text: (o.provider === 'api' ? 'GLM' : 'SCRIBE') + ' · ' + W.clockOf(new Date(o.ts || Date.now())) }));
+      b.addEventListener('click', () => openArchive(o));
+      const del = W.el('span', { class: 'recx', title: 'Delete from archive' }, '✕');
+      del.addEventListener('click', async e => {
+        e.stopPropagation();
+        await W.DB.del(o.id);
+        const outs = AI().outputs;
+        const i2 = outs.findIndex(x => x.id === o.id); if (i2 > -1) outs.splice(i2, 1);
+        W.store.save(); W.store.flush();
+        refreshRecList();
+        W.toast('Chronicle struck from the archive', 'warnc');
       });
+      b.append(del);
       list.append(b);
     });
     rrap.after(list);
+  }
+  async function openArchive(o) {
+    let rec = o;
+    if (W.DB && !o.html) { try { rec = (await W.DB.get(o.id)) || o; } catch (e) {} }
+    W.tab.go('ai', 'read');
+    if (curStream && curStream.timer) { curStream.halted = true; clearTimeout(curStream.timer); }
+    buildReadShell(rec.title || rec.id, { mode: 'restored' });
+    const st = document.getElementById('streambox');
+    if (st) st.innerHTML = rec.html || '<p class="drop">The archive holds the index, but this leaf\'s ink was lost to the quota fire.</p>';
+    if (rec.reportLines && rec.reportLines.length) {
+      const rb = document.getElementById('reportBox');
+      if (rb) renderReport({ id: rec.id, lines: rec.reportLines });
+    }
+    const w2 = (rec.plain || '').trim().split(/\s+/).filter(Boolean).length || rec.words || 0;
+    if (statEl) statEl.textContent = 'RESTORED FROM ARCHIVE · ' + w2 + ' words';
+    W.toast('«' + (rec.title || rec.id) + '» restored from the db archive — nothing regenerated', 'info', 3600);
+  }
+  function idleRead() {
+    const pane = document.getElementById('pane-r');
+    if (!pane || pane.querySelector('.streambox') || curStream) return;
+    buildReadShell('The archive awaits', { mode: 'idle' });
+    const st = document.getElementById('streambox');
+    if (st) st.innerHTML = '<div class="stmiss"><div class="msic">' + W.icon('book', 20) + '</div>NOTHING YET — WRITE, THEN SAVE &amp; PROCESS<br><span style="font-size:11px;letter-spacing:1px;color:#6b5a4c;text-transform:none">past chronicles open from the archive list below · nothing is ever lost</span></div>';
+    if (statEl) statEl.textContent = 'IDLE';
   }
 
   /* ============ prefs dialog ============ */
@@ -595,6 +682,6 @@ window.W = window.W || {};
   W.ai = {
     buildWrite, openPrefs, about, shortcutsDlg, saveAndProcess, restoreLatest,
     isDirty, checkpoint, chip, first6, callGLM, scribe, buildReport, refreshRecList,
-    mdLine, clarifyFlow,
+    mdLine, clarifyFlow, idleRead, openArchive,
   };
 })();
